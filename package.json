@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/HarryUnderscore13/team-profile-generator#readme",
   "dependencies": {
-    "inquirer": "^9.1.4"
+    "inquirer": "^8.1"
   },
   "devDependencies": {
     "jest": "^29.4.3"

@@ -167,6 +167,71 @@ function profileBuilder() {
             employeeMenu();
         }) // add intern function
     }
+    function addIntern() {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "internName",
+                message: "Enter the interns name",
+                validate: (response) => {
+                    if (response !== "") {
+                        return true;
+                    }
+                    return "Please enter at lest one character";
+                }
+            },
+            {
+                type: "input",
+                name: "internId",
+                message: "Enter the interns ID",
+                validate: (response) => {
+                    const ok = response.match(/^[0-9]\d*$/) // regular expression that checks that entry is a sequence of digits using 0-9 
+                    if (ok) {
+                        if (teamIds.includes(response)) {
+                            return "This ID is already taken, please enter a different value";
+                        } else {
+                        return true;
+                        }
+                    }
+                    return "Please enter any number of digits between 0-9";
+                }
+            },
+            {
+                type: "input",
+                name: "internEmail",
+                message: "Enter the interns email address",
+                validate: (response) => {
+                    const ok = response.match(/\S+@\S+\.\S+/) // regular expression that checks that entry matches a valid email format
+                    if (ok) {
+                        return true;
+                    }
+                    return "Please enter a valid email address";
+                } 
+            },
+            {
+                type: "input",
+                name: "internSchool",
+                message: "Enter the interns school",
+                validate: (response) => {
+                    if (response !== "") {
+                        return true;
+                    }
+                    return "Please enter at lest one character";
+                }
+            },
+        ]) 
+        .then((responses) => {
+            const intern = new Intern(
+                responses.internName,
+                responses.internId,
+                responses.internEmail,
+                responses.internSchool,
+            )
+            teamData.push(intern);
+            teamIds.push(responses.internId);
+            employeeMenu();
+        }) // -------
+    }
     function createProfile () {
         if (!fs.existsSync(OUTPUT_DIR)) {
             fs.mkdirSync(OUTPUT_DIR);

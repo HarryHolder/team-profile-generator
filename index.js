@@ -3,33 +3,33 @@ const Engineer = require("./lib/Engineer"); // import engineer.js
 const Intern = require("./lib/Intern"); // import intern.js
 const inquirer = require("inquirer"); // import inquirer module 
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs"); // module for writing file
 
 const OUTPUT_DIR = path.resolve(__dirname, "output"); // Create directory for created file
-const outputPath = path.join(OUTPUT_DIR, "team.html");
+const outputPath = path.join(OUTPUT_DIR, "team.html"); // the file the output creates
 
-const render = require("./src/page-template.js");
+const render = require("./src/page-template.js"); // the html template for the output page
 
 
 // TODO: Write Code to gather information about the development team members, and render the HTML file.
 
-const teamData = [];
-const teamIds = [];
+const teamData = []; // empty array for data recorded
+const teamIds = []; // empty array to ensure unquie ID numbers for employees
 
 console.log("Welcome to team generator, follow the prompts to create your team profile");
 
-function profileBuilder() {
-    function addManager() {
+function profileBuilder() { // main function 
+    function addManager() { // initial inquirer prompts for manager
         inquirer.prompt([
             {
                 type: "input",
                 name: "managerName",
                 message: "Enter the team managers name",
                 validate: (response) => {
-                    if (response !== "") {
+                    if (response !== "") { // ensure response is not an empty string
                         return true;
                     }
-                    return "Please enter at lest one character";
+                    return "Please enter at lest one character"; // message to display if no input given
                 }
             },
             {
@@ -41,7 +41,7 @@ function profileBuilder() {
                     if (ok) {
                         return true;
                     }
-                    return "Please enter any number of digits between 0-9";
+                    return "Please enter any number of digits between 0-9"; 
                 }
             },
             {
@@ -70,18 +70,18 @@ function profileBuilder() {
             }
         ]) 
         .then((responses) => {
-            const manager = new Manager(
+            const manager = new Manager( // Create new instance of Manager with given data
                 responses.managerName,
                 responses.managerId,
                 responses.managerEmail,
                 responses.officeNumber,
             )
-            teamData.push(manager);
-            teamIds.push(responses.managerId);
-            employeeMenu();
+            teamData.push(manager); // Add the info to the array for team data
+            teamIds.push(responses.managerId); // Add ID number to array to check against for other employee
+            employeeMenu(); // run function to give user next steps
         })
     }
-    function employeeMenu() {
+    function employeeMenu() { // function that gives user several options in how to progress
         inquirer.prompt([
             {
                 type: "list",
@@ -91,7 +91,7 @@ function profileBuilder() {
             }
         ])
         .then((response) => {
-            switch (response.choice) {
+            switch (response.choice) { // switch statement to run different functions depending on users response to menu function
                 case "Add an engineer":
                     addEngineer();
                     break;
@@ -122,7 +122,7 @@ function profileBuilder() {
                 validate: (response) => {
                     const ok = response.match(/^[0-9]\d*$/) // regular expression that checks that entry is a sequence of digits using 0-9 
                     if (ok) {
-                        if (teamIds.includes(response)) {
+                        if (teamIds.includes(response)) { // Check entered ID against ID array to ensure it is unique 
                             return "This ID is already taken, please enter a different value";
                         } else {
                         return true;
@@ -165,7 +165,7 @@ function profileBuilder() {
             teamData.push(engineer);
             teamIds.push(responses.engineerId);
             employeeMenu();
-        }) // add intern function
+        }) 
     }
     function addIntern() {
         inquirer.prompt([
@@ -232,14 +232,14 @@ function profileBuilder() {
             employeeMenu();
         }) // -------
     }
-    function createProfile () {
-        if (!fs.existsSync(OUTPUT_DIR)) {
-            fs.mkdirSync(OUTPUT_DIR);
+    function createProfile () { // function for creating the html site
+        if (!fs.existsSync(OUTPUT_DIR)) { // Check if output directory exists 
+            fs.mkdirSync(OUTPUT_DIR); // If no folder exists, make one
         }
-        fs.writeFileSync(outputPath, render(teamData), "utf-8")
+        fs.writeFileSync(outputPath, render(teamData), "utf-8") // Write the html file to the output folder, following the template stored in render variable
     }
-    addManager();
+    addManager(); // start the process 
 }
 
-profileBuilder();
+profileBuilder(); // When node index.js is called, run the function for building the profile
 
